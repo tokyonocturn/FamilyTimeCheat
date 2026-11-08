@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>FamilyTimeChef.InGame</AssemblyName>
+    <RootNamespace>FamilyTimeChef.Plugin</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
+    <!--
+      Unity reference assemblies are not distributed with this project.
+      tools\fetch-refs.ps1 copies them to lib\unity (git-ignored), or point this
+      property at your own install's FamilyTime_Data\Managed directory.
+    -->
+    <FamilyTimeManagedDir Condition="'$(FamilyTimeManagedDir)' == ''">$(MSBuildThisFileDirectory)..\..\lib\unity</FamilyTimeManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine">
+      <HintPath>$(FamilyTimeManagedDir)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(FamilyTimeManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>$(FamilyTimeManagedDir)\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>
