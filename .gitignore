@@ -1,0 +1,31 @@
+# Build output
+bin/
+obj/
+dist/
+build/
+*.user
+*.suo
+.vs/
+
+# Local reference assemblies and third-party loaders.
+# These are copied from a game install or downloaded at build time and are
+# never redistributable with this project.
+lib/
+vendor/
+staging/
+
+# Captured test output (screenshots are curated into docs/screenshots)
+artifacts/
+*.log
+*.tmp
+
+# Runtime channel files, in case the tool is ever run from the repo
+cmd.queue
+resp.txt
+status.txt
+groups.txt
+events.log
+hello.txt
+agent.log
+plugin.log
+shim.log
