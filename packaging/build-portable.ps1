@@ -77,7 +77,8 @@ $lines = foreach ($file in $artifacts) {
     $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLowerInvariant()
     "{0}  {1}" -f $hash, (Split-Path -Leaf $file)
 }
-$lines | Set-Content -Path $sums -Encoding ascii
+# LF line endings and no BOM so sha256sum -c works on Windows and Unix tooling.
+[System.IO.File]::WriteAllText($sums, (($lines -join "`n") + "`n"), (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host ""
 Write-Host "Artifacts:"
