@@ -1,0 +1,75 @@
+name: build
+
+# The in-process shim (src/FamilyTimeChef.Plugin) is intentionally NOT built here:
+# it compiles against UnityEngine reference assemblies taken from a Family Time
+# installation you own, which cannot be redistributed or fetched in CI. The
+# native tools and the Studio GUI are fully buildable and are what this workflow
+# verifies, together with the published release checksums.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Studio GUI and native tools
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build Studio GUI
+        run: dotnet build src/FamilyTimeChef.Studio/FamilyTimeChef.Studio.csproj -c Release
+
+      - name: Build native tools with MSVC
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path build/native | Out-Null
+
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          if (-not (Test-Path $vswhere)) { throw "vswhere not found" }
+          $vsPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vsPath) { throw "Visual Studio with C++ tools not found" }
+          $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
+          if (-not (Test-Path $vcvars)) { throw "vcvars64.bat not found at $vcvars" }
+
+          $script = @(
+            "call `"$vcvars`"",
+            "cl /nologo /O2 /LD src\agent\agent.c /Fe:build\native\ftagent.dll",
+            "cl /nologo /O2 tools\injector\injector.c /Fe:build\native\ftinject.exe",
+            "cl /nologo /O2 tools\input\input.c /Fe:build\native\ftinput.exe"
+          ) -join " && "
+          cmd /c $script
+          if ($LASTEXITCODE -ne 0) { throw "native build failed" }
+
+          foreach ($f in 'ftagent.dll','ftinject.exe','ftinput.exe') {
+            $p = Join-Path 'build/native' $f
+            if (-not (Test-Path $p)) { throw "missing output: $f" }
+            Write-Host "$f -> $((Get-Item $p).Length) bytes"
+          }
+
+  checksums:
+    name: Verify published release checksums
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download release assets and verify SHA-256
+        run: |
+          set -euo pipefail
+          base="https://github.com/tokyonocturn/FamilyTimeCheat/releases/download/episode-3"
+          mkdir -p artifacts && cd artifacts
+          grep -v '^#' ../release/checksums.txt | grep -v '^$' | while read -r hash file; do
+            echo "downloading $file"
+            curl -sSL --fail -o "$file" "$base/$file"
+            echo "$hash  $file" | sha256sum -c -
+          done
