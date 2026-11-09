@@ -3,7 +3,7 @@
 ; /DMyVersion and /DMySource are supplied by the packaging script.
 
 #ifndef MyVersion
-  #define MyVersion "0.1.0"
+  #define MyVersion "0.2.0"
 #endif
 #ifndef MySource
   #define MySource "..\..\dist\FamilyTimeChef-" + MyVersion + "-ep3-dx11-portable"

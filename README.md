@@ -78,7 +78,15 @@ See [docs/INSTALL.md](docs/INSTALL.md). The short version, with the game running
 & "$env:LOCALAPPDATA\FamilyTimeChef\FamilyTimeChef.Studio.exe"
 ```
 
-Injection is once per game session.
+Injection is once per game session. The Studio also does this for you: on launch it
+looks for a running `FamilyTime.exe` and loads the shim automatically, so the
+manual `ftinject.exe` step is optional.
+
+Some antivirus products flag tools that inject into another process, because the
+underlying Windows calls look the same as a loader's. See
+[docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) for why that happens and the only
+legitimate fixes (code signing, false-positive reports). This project does not
+include evasion code and does not ask you to disable your scanner.
 
 ## Build
 
@@ -102,7 +110,8 @@ reference assemblies taken from **your own** game install; none are shipped here
 
 ## Troubleshooting
 
-[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
+[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md), including
+[docs/ANTIVIRUS.md](docs/ANTIVIRUS.md) for scanner warnings.
 
 ## Changes
 

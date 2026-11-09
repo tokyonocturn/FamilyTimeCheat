@@ -13,7 +13,7 @@
       powershell -ExecutionPolicy Bypass -File packaging\build-portable.ps1 -PortableOnly
 #>
 param(
-    [string]$Version = "0.1.0",
+    [string]$Version = "0.2.0",
     [string]$Configuration = "Release",
     [string]$ManagedDir = "",
     [switch]$PortableOnly

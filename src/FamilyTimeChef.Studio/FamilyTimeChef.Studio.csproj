@@ -10,6 +10,17 @@
     <Nullable>disable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+    <!-- Version metadata is embedded in the executable. Published, identifiable
+         binaries are less likely to be treated as anonymous droppers. -->
+    <Version>0.2.0</Version>
+    <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <FileVersion>0.2.0.0</FileVersion>
+    <AssemblyTitle>FamilyTimeChef Studio</AssemblyTitle>
+    <Product>FamilyTimeChef</Product>
+    <Company>FamilyTimeChef contributors</Company>
+    <Description>External companion tool for Family Time. Episode 3 DX11 only.</Description>
+    <Copyright>MIT licensed. Unofficial and unaffiliated with the Family Time developers or publisher.</Copyright>
   </PropertyGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FamilyTimeChef.Studio
@@ -52,9 +53,10 @@ namespace FamilyTimeChef.Studio
             _poll.Tick += (s, e) => Poll();
             _poll.Start();
 
-            Shown += (s, e) =>
+            Shown += async (s, e) =>
             {
                 TryResizeSplit();
+                await AutoAttachAsync();
                 TryAutoConnect();
             };
             FormClosing += (s, e) => { _poll?.Stop(); _backend.Dispose(); };
@@ -489,15 +491,46 @@ namespace FamilyTimeChef.Studio
             }
         }
 
-        private void ToggleConnection()
+        private async void ToggleConnection()
         {
             if (_backend.Connected)
             {
                 _backend.Disconnect();
+                return;
             }
-            else
+
+            await AutoAttachAsync();
+            TryAutoConnect();
+        }
+
+        private bool _attaching;
+
+        /// <summary>
+        /// Finds a running game and injects the shim, replacing the manual
+        /// "ftinject.exe &lt;pid&gt; ftagent.dll" step. Injection outcome is reported from
+        /// the injector's own exit code, never assumed.
+        /// </summary>
+        private async Task AutoAttachAsync()
+        {
+            if (_attaching || _backend.Connected) return;
+
+            _attaching = true;
+            try
             {
-                TryAutoConnect();
+                if (!IsDisposed) _btnConnect.Enabled = false;
+                AppendLog("Looking for a running Family Time process...");
+
+                var result = await Injector.InjectAsync();
+                AppendLog(result.Message);
+            }
+            catch (Exception ex)
+            {
+                AppendLog("Injection error: " + ex.Message);
+            }
+            finally
+            {
+                _attaching = false;
+                if (!IsDisposed) _btnConnect.Enabled = true;
             }
         }
 

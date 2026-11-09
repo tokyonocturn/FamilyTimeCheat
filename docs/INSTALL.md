@@ -42,7 +42,10 @@ The printed hash must match the corresponding line in `SHA256SUMS.txt`.
 
 ## Inject and launch
 
-The shim is loaded once per game session.
+The shim is loaded once per game session. In normal use you do not need the manual
+step: start the game, then start the Studio, and it finds the process and attaches
+itself. The manual path below still works and is the fallback if automatic attach
+is blocked.
 
 1. Start Family Time and get its process id:
    ```powershell

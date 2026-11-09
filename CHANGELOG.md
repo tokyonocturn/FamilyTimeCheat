@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-09
+
+### Added
+
+- **Automatic attach.** The Studio finds a running `FamilyTime.exe` and injects
+  the shim itself, replacing the manual `ftinject.exe` step. It reports the
+  injector's own exit code, skips work when `status.txt` already shows a bound
+  session, and falls back to the manual path if the payload is missing.
+- Version metadata embedded in the Studio executable.
+- `docs/ANTIVIRUS.md`: why injection-based tools trip scanners, and the only
+  legitimate remedies (code signing, false-positive submission). No evasion code.
+
+### Notes
+
+- The injection primitive is unchanged: `LoadLibrary` on a remote thread.
+- Auto-attach makes the tool more visible to heuristics than running the injector
+  manually. The manual path remains supported.
+
 ## [0.1.0] - 2026-11-08
 
 First published release. **Episode 3 DX11 (b108) only.**

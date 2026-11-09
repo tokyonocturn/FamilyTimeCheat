@@ -18,6 +18,30 @@ Select-String "focus shield installed" "$env:LOCALAPPDATA\FamilyTimeChef\agent.l
 If the line is absent, the shim did not start - see *Nothing binds* below. The
 `RELAX` verb's `runInBackground=1` is not a fix and is not claimed to work.
 
+## The Studio could not attach automatically
+
+The Studio looks for `FamilyTime.exe`, then runs `ftinject.exe` from its own folder
+or from `%LOCALAPPDATA%\FamilyTimeChef`. The operation log states which of these
+happened:
+
+| Log message | Meaning |
+| --- | --- |
+| `Family Time is not running` | Start the game first, then press Connect. |
+| `Could not find ftinject.exe and ftagent.dll` | The Studio is running outside its install folder. Run `install.ps1` or the installer. |
+| `Already attached` | Nothing to do; the shim is live. |
+| `Injector failed (exit N)` | See the exit code in `tools/injector/injector.c`; usually access denied or wrong architecture. |
+| `timed out after 20 seconds` | The game may be hung or still loading a save. |
+
+If automatic attach keeps failing, run the injector by hand as described in
+[INSTALL.md](INSTALL.md); the manual path is unchanged.
+
+## Antivirus flags the tool
+
+Injection into another process is the same primitive loaders use, so scanners can
+flag it. Read [ANTIVIRUS.md](ANTIVIRUS.md): verify the hash, report the false
+positive, or build from source. Do not disable real-time protection or add broad
+exclusions to work around it.
+
 ## Nothing binds (`bound=0`, no `status.txt`)
 
 | Symptom | Cause | Fix |
