@@ -36,7 +36,7 @@ namespace FamilyTimeChef.Studio
 
         public MainForm()
         {
-            Text = "Family Time Chef — Studio";
+            Text = "Family Time Chef - Studio";
             ClientSize = new Size(1120, 700);
             MinimumSize = new Size(880, 560);
             BackColor = Theme.Bg;

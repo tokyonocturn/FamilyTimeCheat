@@ -1,5 +1,5 @@
 ; Inno Setup script for FamilyTimeChef.
-; Build with: packaging\build-portable.ps1 -Installer
+; Build with: packaging\build-portable.ps1
 ; /DMyVersion and /DMySource are supplied by the packaging script.
 
 #ifndef MyVersion
@@ -14,7 +14,6 @@ AppId={{9F2C6A54-7E1B-4C0D-9E3A-6B2F5D8C1A47}
 AppName=FamilyTimeChef
 AppVersion={#MyVersion}
 AppPublisher=FamilyTimeChef contributors
-AppPublisherURL=https://github.com/
 DefaultDirName={localappdata}\FamilyTimeChef
 DefaultGroupName=FamilyTimeChef
 DisableProgramGroupPage=yes
@@ -36,6 +35,8 @@ Source: "{#MySource}\FamilyTimeChef.InGame.dll"; DestDir: "{app}"; Flags: ignore
 Source: "{#MySource}\ftagent.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MySource}\ftinject.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MySource}\ftinput.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MySource}\install.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MySource}\uninstall.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MySource}\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MySource}\INSTALL.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MySource}\LEGAL.md"; DestDir: "{app}"; Flags: ignoreversion

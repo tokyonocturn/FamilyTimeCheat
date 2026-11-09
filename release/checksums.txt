@@ -1,0 +1,2 @@
+d98f4927d9d9c620e96a83cb252f0c27ad9256c783f1d3257be13be300be05e9  FamilyTimeChef-0.1.0-ep3-dx11-portable.exe
+947d7c9022e8ab28dca1713b47430769d9d0b8479246f1bbb7331214b9b3bfef  FamilyTimeChef-0.1.0-ep3-dx11-setup.exe

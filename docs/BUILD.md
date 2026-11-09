@@ -14,7 +14,7 @@
 
 The shim compiles against `UnityEngine.dll`, `UnityEngine.CoreModule.dll` and
 `UnityEngine.IMGUIModule.dll`. These are Unity build artefacts and are **not**
-distributed with this project — point the build at your own copy:
+distributed with this project - point the build at your own copy:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\fetch-refs.ps1 `

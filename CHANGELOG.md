@@ -14,18 +14,18 @@ Every item below was confirmed against the running game by re-reading the game's
 own state, and each action is paired with the response line the shim returned for
 that specific command id.
 
-- **Detection** — `episode=3 buildLabel=b108 (DX11) renderer=Direct3D11
+- **Detection** - `episode=3 buildLabel=b108 (DX11) renderer=Direct3D11
   supported=1 bound=1`, `screen=984x561 windowed`.
-- **Manual spawn** — `RES|<id>|SPAWN|st=OK|msg=Manual spawn: template=acorn_GAT
+- **Manual spawn** - `RES|<id>|SPAWN|st=OK|msg=Manual spawn: template=acorn_GAT
   templateIndex=6 ...`, with the acorn group count rising per click.
-- **Manual feed** (`FOOD` need active) — `RES|<id>|FEED|st=OK|msg=Manual feed:
+- **Manual feed** (`FOOD` need active) - `RES|<id>|FEED|st=OK|msg=Manual feed:
   8 need(s) satisfied.` with `hungry` falling 8 and `feeds` rising 8 per click.
-- **Manual water** (`THIRST` need active) — `RES|<id>|WATER|st=OK|msg=Manual
+- **Manual water** (`THIRST` need active) - `RES|<id>|WATER|st=OK|msg=Manual
   water: 8 delivered` with `hungry` falling 8 and `waters` rising 8 per click.
-- **Unfocused operation** — with the Studio window foreground for the whole block
+- **Unfocused operation** - with the Studio window foreground for the whole block
   and the game never re-focused by a click, the simulation clock advanced
   6.08 s across 6 s wall time while all three actions executed.
-- **Minimized operation** — with the game window minimized (`IsIconic=True`),
+- **Minimized operation** - with the game window minimized (`IsIconic=True`),
   the clock advanced 6.08 s across 6 s and all three actions executed.
 
 ### Added

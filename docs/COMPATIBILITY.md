@@ -5,11 +5,11 @@ was not demonstrated. It is deliberately explicit about dead ends.
 
 | Install | Episode | Renderer | Status |
 | --- | --- | --- | --- |
-| `Family_Time_Ep_3_WINDOWS_DX11_b108` | 3 | DX11 | **Supported — verified in game** |
+| `Family_Time_Ep_3_WINDOWS_DX11_b108` | 3 | DX11 | **Supported - verified in game** |
 | `Family_Time_Ep_3_WINDOWS_DX12_b108` | 3 | DX12 | Detected, **unsupported** |
 | `FamilyTime_Patreon-DX11-Build37` | 2 | DX11 | **Not implemented** |
 | `FamilyTime_Patreon-DX12-Build37` | 2 | DX12 | **Not implemented** |
-| `FamilyTime_Patreon` | 1 | — | **Not implemented** |
+| `FamilyTime_Patreon` | 1 | - | **Not implemented** |
 
 Only one of the five installations has working code and in-game verification.
 The others have no implementation in this project. Nothing here is a claim about
@@ -25,8 +25,8 @@ could read with `ReadProcessMemory`:
 * `GAT.GetInstanceInfoBuffer()` returns a **`ComputeBuffer`**
   (`GAT.cs`, `instanceInfoBuffer` field). Hunger is a packed bit inside that GPU
   buffer.
-* Hunger is advanced by compute kernels — `IncrementHunger`, `CheckHunger`,
-  `CountHungry`, `DrinkWater` — and by the utility kernel behind
+* Hunger is advanced by compute kernels - `IncrementHunger`, `CheckHunger`,
+  `CountHungry`, `DrinkWater` - and by the utility kernel behind
   `GATUtilities.ApplyHungerDelta`.
 * Reading it back requires `AsyncGPUReadback` (`Tools.RequestBufferReadback`),
   which only works from inside the player.
@@ -66,12 +66,12 @@ All five target installs are **Unity 6000.2.12f1, Mono** (the player loads
 
 | Loader | Version | Result |
 | --- | --- | --- |
-| Baseline (no loader) | — | Game launches normally. Proves the game itself is fine. |
+| Baseline (no loader) | - | Game launches normally. Proves the game itself is fine. |
 | BepInEx | 5.4.23.6 (Doorstop 4.6.0) | Player **crashes** in `UnityPlayer!UnityMain`; no managed stack frame. |
 | BepInEx | 6.0.0-pre.2 (Doorstop 4.3.0) | Preloader runs, then `MissingMethodException: void System.Reflection.Module.GetPEKind(...)`. |
 | BepInEx | 6.0.0-be.793 (Doorstop 4.6.0) | Same `MissingMethodException` on `Module.GetPEKind`. |
 | Doorstop | 4.6.0 + target built for `netstandard2.0` | Player **crashes** in `UnityPlayer!UnityMain`. |
-| Doorstop | 4.6.0 + target built for `net472` | Player survives, but `Doorstop.Entrypoint:Start` is silently never invoked — regardless of path, identity, or visibility. |
+| Doorstop | 4.6.0 + target built for `net472` | Player survives, but `Doorstop.Entrypoint:Start` is silently never invoked - regardless of path, identity, or visibility. |
 | MelonLoader | 0.7.3 | Bootstrap fails: `CustomAttributeFormatException: Could not find a field with name CharSet`. |
 
 Two conclusions:
@@ -91,7 +91,7 @@ skipping `Module.GetPEKind`. On a fresh copy of Episode 3 DX11 the player stayed
 alive and our shim ran, then hit a chain of missing mscorlib members in Unity
 6000.2's Mono: `AppDomain.BaseDirectory`, `Assembly.GetType(string, bool)`,
 `File.AppendAllText(string, string)`. Compiling against the game's own
-`Managed/mscorlib.dll` is impossible — it is a trimmed facade missing
+`Managed/mscorlib.dll` is impossible - it is a trimmed facade missing
 `StructLayoutAttribute`, `AssemblyCompanyAttribute`, `TargetFrameworkAttribute`
 and `TcpListener`. The deepest confirmed point is
 `TypeInitializationException: The type initializer for 'UnityEngine.Object' threw
@@ -137,7 +137,7 @@ bound=1`, `screen=984x561 windowed`.
 Each action below is presented with the response line carrying **that command's
 own id**, plus the game state re-read before and after.
 
-**Unfocused block** — Studio foreground for the entire block, game never
+**Unfocused block** - Studio foreground for the entire block, game never
 re-focused by a click; simulation clock advanced `t=1794181591377 →
 t=1794181597453` (6.08 s over 6 s wall).
 
@@ -149,7 +149,7 @@ t=1794181597453` (6.08 s over 6 s wall).
 
 `fg` at start and end: Studio. No focus-return fallback was used or needed.
 
-**Minimized block** — `IsIconic=True`; clock advanced `t=1794181640831 →
+**Minimized block** - `IsIconic=True`; clock advanced `t=1794181640831 →
 t=1794181646912` (6.08 s over 6 s wall).
 
 | Action | Response | Observed change |
@@ -170,10 +170,10 @@ procedure has to be a valid address in the target. The `RELAX` verb's
 
 ## 4. Other installations
 
-- **Episode 3 DX12** — same managed API, different renderer. Detected via
+- **Episode 3 DX12** - same managed API, different renderer. Detected via
   `SystemInfo.graphicsDeviceType`; the tool reports it and refuses to bind.
   Never driven, so it is shipped as unsupported.
-- **Episodes 1 and 2** — no implementation exists in this project. Episode 1 has
+- **Episodes 1 and 2** - no implementation exists in this project. Episode 1 has
   no thirst mechanic (`HungerType` is FOOD only), so water delivery is not
   applicable; Episodes 2 and 3 reuse the packed bit at bit 19 and must read the
   active need type at runtime.

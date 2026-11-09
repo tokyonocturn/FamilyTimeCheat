@@ -15,7 +15,7 @@ Check that it installed:
 Select-String "focus shield installed" "$env:LOCALAPPDATA\FamilyTimeChef\agent.log"
 ```
 
-If the line is absent, the shim did not start — see *Nothing binds* below. The
+If the line is absent, the shim did not start - see *Nothing binds* below. The
 `RELAX` verb's `runInBackground=1` is not a fix and is not claimed to work.
 
 ## Nothing binds (`bound=0`, no `status.txt`)
@@ -62,5 +62,5 @@ to bind rather than performing untested actions.
 
 `%LOCALAPPDATA%\FamilyTimeChef` contains `status.txt`, `groups.txt`, `resp.txt`,
 `events.log`, `agent.log`, `plugin.log` and `shim.log`. These contain no account
-information, but they do contain your game's runtime values — review before
+information, but they do contain your game's runtime values - review before
 sharing them publicly.
