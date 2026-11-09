@@ -45,9 +45,9 @@ dotnet build src\FamilyTimeChef.Studio\FamilyTimeChef.Studio.csproj -c Release
 MSVC:
 
 ```bat
-cl /O2 /LD src\agent\agent.c /Fe:build\native\ftagent.dll
-cl /O2 tools\injector\injector.c /Fe:build\native\ftinject.exe
-cl /O2 tools\input\input.c /Fe:build\native\ftinput.exe
+cl /O2 /LD src\agent\agent.c /Fe:build\native\ftagent.dll /link user32.lib
+cl /O2 tools\injector\injector.c /Fe:build\native\ftinject.exe /link user32.lib
+cl /O2 tools\input\input.c /Fe:build\native\ftinput.exe /link user32.lib
 ```
 
 MinGW-w64:

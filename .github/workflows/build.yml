@@ -44,9 +44,9 @@ jobs:
 
           $script = @(
             "call `"$vcvars`"",
-            "cl /nologo /O2 /LD src\agent\agent.c /Fe:build\native\ftagent.dll",
-            "cl /nologo /O2 tools\injector\injector.c /Fe:build\native\ftinject.exe",
-            "cl /nologo /O2 tools\input\input.c /Fe:build\native\ftinput.exe"
+            "cl /nologo /O2 /LD src\agent\agent.c /Fe:build\native\ftagent.dll /link user32.lib",
+            "cl /nologo /O2 tools\injector\injector.c /Fe:build\native\ftinject.exe /link user32.lib",
+            "cl /nologo /O2 tools\input\input.c /Fe:build\native\ftinput.exe /link user32.lib"
           ) -join " && "
           cmd /c $script
           if ($LASTEXITCODE -ne 0) { throw "native build failed" }
