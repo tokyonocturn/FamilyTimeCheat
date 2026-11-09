@@ -18,22 +18,24 @@ on thirst days - manually from a GUI, or hands-off on a timer.
 | Install | Episode | Renderer | Support |
 | --- | --- | --- | --- |
 | `Family_Time_Ep_3_WINDOWS_DX11_b108` | 3 | DX11 | **Supported and verified in game** |
-| `Family_Time_Ep_3_WINDOWS_DX12_b108` | 3 | DX12 | Detected, **unsupported** (refuses to bind) |
-| `FamilyTime_Patreon-DX11-Build37` | 2 | DX11 | **Unsupported** - not implemented |
-| `FamilyTime_Patreon-DX12-Build37` | 2 | DX12 | **Unsupported** - not implemented |
-| `FamilyTime_Patreon` | 1 | - | **Unsupported** - not implemented |
+| `Family_Time_Ep_3_WINDOWS_DX12_b108` | 3 | DX12 | Detected, **unverified** |
+| `FamilyTime_Patreon-DX11-Build37` | 2 | DX11 | **Supported and verified in game** |
+| `FamilyTime_Patreon-DX12-Build37` | 2 | DX12 | **Supported and verified in game** |
+| `FamilyTime_Patreon` | 1 | - | **Supported and verified in game** (no thirst) |
 
-Only **Episode 3 DX11 (b108)** has both working code and in-game verification.
-Episodes 1 and 2 have no implementation in this project. Episode 3 DX12 shares
-the same managed API but has not been driven, so the tool detects the renderer
-and refuses to bind rather than pretending to work.
+Episodes 1, 2 (DX11 and DX12) and Episode 3 DX11 have both working code and
+in-game verification. Episode 3 DX12 shares the same managed API and the same
+packed hunger bit, but it has not been driven, so it is listed as unverified
+rather than supported. Episode 1 packs a 4-bit hunger level instead of a single
+bit, and it has no thirst mechanic at all, so water is refused there by design.
 
 What was actually measured is in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## What it does
 
 - **Live need reads** - instance count, hungry count and the active need type
-  (`FOOD` or `THIRST`), read from the game's own GPU buffer each tick.
+  (`FOOD` or `THIRST`), read from the game's own GPU buffer each tick. Both the
+  Episode 2/3 single-bit layout and the Episode 1 4-bit level layout are read.
 - **Manual actions** - Spawn food, Feed, Water buttons, plus a "feed all" pass.
 - **Automation** - optional timers for feeding, watering and spawning, with a
   per-child cooldown and a per-tick action budget so the frame is never blocked.
@@ -103,7 +105,9 @@ reference assemblies taken from **your own** game install; none are shipped here
   game is in the background or minimized. Automation timers set inside the game
   remain the only supported automation; the `RELAX` verb's `runInBackground=1` is
   **not** claimed to have any effect.
-- Only Episode 3 DX11 is implemented and verified.
+- Episode 3 DX12 is unverified: it has not been driven, so no claim is made for it.
+- Episode 1 has no thirst mechanic, so `Water` returns a refusal there instead of
+  acting. Feeding and spawning work normally.
 - The Studio window and the game window must not overlap if you script clicks at
   fixed coordinates (see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)).
 - Actions are gated on a recognised build; unknown builds stay read-only.

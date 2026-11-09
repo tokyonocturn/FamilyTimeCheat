@@ -57,6 +57,33 @@ behaviour more visible to scanners than a manual `ftinject.exe` run, because the
 GUI process itself launches the injector. That trade-off is documented rather than
 hidden, and the manual path is still supported.
 
+## Verified scanner results
+
+Measured on 2026-11-09 with Windows Defender on this machine: real-time
+protection on, `AMServiceEnabled=True`, signature `1.463.191.0`, no sandbox or
+scan exclusions applied by this project.
+
+| File | MpCmdRun verdict |
+| --- | --- |
+| `FamilyTimeChef-0.3.0-ep3-dx11-portable.exe` | `found no threats` |
+| `FamilyTimeChef-0.3.0-ep3-dx11-setup.exe` | `found no threats` |
+| `ftinject.exe` | `found no threats` |
+| `ftagent.dll` | `found no threats` |
+| `FamilyTimeChef.InGame.dll` | `found no threats` |
+| `FamilyTimeChef.Studio.exe` | `found no threats` |
+
+A custom scan of the whole `dist` directory raised no new detections: the count
+before and after the scan was identical (3), and all three were pre-existing,
+unrelated detections outside this project.
+
+One honest caveat. On 2026-11-08 Defender did classify an earlier development
+build, `build/native/ftinject.exe`, as `PUA:Win32/Vigua.A` (severity low). That is
+exactly the heuristic behaviour described above: the same source, compiled a
+different way, matched a potentially-unwanted-application rule. The file shipped
+in `dist` today scans clean, but a single engine's clean result is not a promise
+about every engine or every future build. If you want certainty, build from
+source or wait for a signed release.
+
 ## If you are being blocked
 
 1. Confirm the file matches the release `SHA256SUMS.txt`.

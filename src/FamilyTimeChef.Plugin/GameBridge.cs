@@ -440,6 +440,14 @@ namespace FamilyTimeChef.Plugin
             "acorn", "egg", "milk", "carrot", "apple", "bread", "mushroom"
         };
 
+        // Episode 1 ships no acorn asset at all: its food item is chicken_drumstick_GAT, seen
+        // as a live template in the Patreon build. These keys are consulted only when the
+        // list above matched nothing, so Episode 2 and 3 keep resolving acorn_GAT exactly as
+        // before. No creature token is listed here: "drumstick" is the one word the food
+        // asset shares with chicken_GAT, and the creature templates must never be spawned as
+        // food.
+        private static readonly string[] FallbackFoodKeys = { "drumstick" };
+
         private object FindFoodTemplate(out string chosen)
         {
             chosen = null;
@@ -449,31 +457,37 @@ namespace FamilyTimeChef.Plugin
                 if (templateType == null) return null;
 
                 var objects = Resources.FindObjectsOfTypeAll(templateType);
-                object fallback = null;
-                string fallbackName = null;
+                var keySets = new[] { FoodKeys, FallbackFoodKeys };
 
-                foreach (var candidate in objects)
+                // Episode order matters: the primary list is tried over every asset first, so a
+                // build that carries acorn_GAT still resolves it, and only a build without any
+                // primary match falls through to the Episode 1 item.
+                foreach (var keys in keySets)
                 {
-                    var asset = candidate as UnityEngine.Object;
-                    if (asset == null || string.IsNullOrEmpty(asset.name)) continue;
-
-                    var lower = asset.name.ToLowerInvariant();
-
-                    // Never pick a creature or the player as "food".
-                    if (lower.Contains("gat") && (lower.Contains("pig") || lower.Contains("hen") ||
-                        lower.Contains("rooster") || lower.Contains("boar") || lower.Contains("player")))
-                        continue;
-
-                    foreach (var key in FoodKeys)
+                    foreach (var candidate in objects)
                     {
-                        if (lower.IndexOf(key, StringComparison.Ordinal) < 0) continue;
-                        if (fallback == null) { fallback = asset; fallbackName = asset.name; }
-                        break;
+                        var asset = candidate as UnityEngine.Object;
+                        if (asset == null || string.IsNullOrEmpty(asset.name)) continue;
+
+                        var lower = asset.name.ToLowerInvariant();
+
+                        // Never pick a creature or the player as "food".
+                        if (lower.Contains("gat") && (lower.Contains("pig") || lower.Contains("hen") ||
+                            lower.Contains("rooster") || lower.Contains("boar") || lower.Contains("player") ||
+                            lower.Contains("wolf") || lower.Contains("ghost")))
+                            continue;
+
+                        foreach (var key in keys)
+                        {
+                            if (lower.IndexOf(key, StringComparison.Ordinal) < 0) continue;
+                            chosen = asset.name;
+                            return asset;
+                        }
                     }
                 }
 
-                chosen = fallbackName;
-                return fallback;
+                chosen = null;
+                return null;
             }
             catch (Exception ex)
             {

@@ -13,9 +13,9 @@
 
     <!-- Version metadata is embedded in the executable. Published, identifiable
          binaries are less likely to be treated as anonymous droppers. -->
-    <Version>0.2.0</Version>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
+    <Version>0.3.0</Version>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
     <AssemblyTitle>FamilyTimeChef Studio</AssemblyTitle>
     <Product>FamilyTimeChef</Product>
     <Company>FamilyTimeChef contributors</Company>

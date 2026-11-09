@@ -48,7 +48,7 @@ exclusions to work around it.
 | --- | --- | --- |
 | `ftinject.exe` prints an error | wrong architecture or wrong path | use the x64 injector with an absolute path to `ftagent.dll` |
 | Injection succeeds, no `status.txt` | shim not loaded, or not the supported build | check `%LOCALAPPDATA%\FamilyTimeChef\plugin.log` and `shim.log` |
-| `supported=0` | different episode or renderer | only Episode 3 DX11 b108 is supported; DX12 is detected and refused on purpose |
+| `supported=0` | unrecognised build | the build-guid is not one of the Episode 1, 2 or 3 builds in `BuildDetector.cs`; writes stay disabled rather than risk an unknown layout |
 | `bindError` is set | game world not created yet | inject after the save has loaded, then wait a few seconds |
 
 Injection is **per game session**. Restarting the game requires injecting again.

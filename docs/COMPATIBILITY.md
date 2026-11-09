@@ -6,14 +6,15 @@ was not demonstrated. It is deliberately explicit about dead ends.
 | Install | Episode | Renderer | Status |
 | --- | --- | --- | --- |
 | `Family_Time_Ep_3_WINDOWS_DX11_b108` | 3 | DX11 | **Supported - verified in game** |
-| `Family_Time_Ep_3_WINDOWS_DX12_b108` | 3 | DX12 | Detected, **unsupported** |
-| `FamilyTime_Patreon-DX11-Build37` | 2 | DX11 | **Not implemented** |
-| `FamilyTime_Patreon-DX12-Build37` | 2 | DX12 | **Not implemented** |
-| `FamilyTime_Patreon` | 1 | - | **Not implemented** |
+| `Family_Time_Ep_3_WINDOWS_DX12_b108` | 3 | DX12 | Detected, **unverified** |
+| `FamilyTime_Patreon-DX11-Build37` | 2 | DX11 | **Supported - verified in game** |
+| `FamilyTime_Patreon-DX12-Build37` | 2 | DX12 | **Supported - verified in game** |
+| `FamilyTime_Patreon` | 1 | - | **Supported - verified in game** |
 
-Only one of the five installations has working code and in-game verification.
-The others have no implementation in this project. Nothing here is a claim about
-future support.
+Four of the five installations have been driven in game and are recorded below
+with the response each command returned. Episode 3 DX12 has not been driven, so
+it is marked unverified: no claim is made either way, and nothing here is a
+promise about future support.
 
 ---
 
@@ -168,22 +169,80 @@ re-asserted every frame, so the shim installs a WndProc subclass that swallows
 procedure has to be a valid address in the target. The `RELAX` verb's
 `runInBackground=1` is **not** claimed to have any effect.
 
-## 4. Other installations
+## 4. Episodes 1 and 2, measured
 
-- **Episode 3 DX12** - same managed API, different renderer. Detected via
-  `SystemInfo.graphicsDeviceType`; the tool reports it and refuses to bind.
-  Never driven, so it is shipped as unsupported.
-- **Episodes 1 and 2** - no implementation exists in this project. Episode 1 has
-  no thirst mechanic (`HungerType` is FOOD only), so water delivery is not
-  applicable; Episodes 2 and 3 reuse the packed bit at bit 19 and must read the
-  active need type at runtime.
+The shim needed no injection change for the older builds: all of them are
+Unity 6000.2.12f1 Mono, so the same `LoadLibrary` + `mono_thread_attach` route
+loads it. What differs is the shape of the data and one missing mechanic.
+
+| Build | Element stride | Hunger field | Thirst |
+| --- | --- | --- | --- |
+| Episode 1 `FamilyTime_Patreon` | 16 bytes (`uint` + `Vector3`) | 4-bit level at bit 19 | none |
+| Episode 2 `Build 37` DX11/DX12 | 4 bytes (`uint`) | 1 bit at bit 19 | every third day |
+| Episode 3 `b108` DX11 | 4 bytes (`uint`) | 1 bit at bit 19 | every third day |
+
+The bridge selects the 16-byte reader when `ComputeBuffer.stride >= 16`, which is
+why Episode 1 reports a hunger level total above its hungry count.
+
+### Episode 1 (`FamilyTime_Patreon`, Direct3D12)
+
+`episode=1 buildLabel=Patreon renderer=Direct3D12 supported=1 bound=1`,
+`instances=184`, `hungry=3`, `hungerTotal=15`.
+
+| Action | Response | Observed change |
+| --- | --- | --- |
+| Spawn food | `RES\|<id>\|SPAWN\|st=OK\|msg=Manual spawn: template=chicken_drumstick_GAT templateIndex=2 countBefore=184 countAfter=184 requested=x=7.60 y=0.00 z=29.97` | `instances 184 -> 185`, drumstick group `0 -> 1` |
+| Feed | `RES\|<id>\|FEED\|st=OK\|msg=Manual feed: 3 need(s) satisfied.` | `hungerTotal 15 -> 12`, `feeds 0 -> 3` |
+| Water | `RES\|<id>\|WATER\|st=ERR\|msg=Manual water: Episode 1 has no thirst mechanic, so water is not applicable.` | refused by design |
+
+Clock: `t=1794186419107 -> t=1794186421164` (2.06 s over 2 s).
+
+Episode 1 ships no acorn asset. Its food template is `chicken_drumstick_GAT`,
+which the name list originally missed, so spawn failed with
+`no food template asset found ()`. The lookup now runs the original name list
+first and falls back to `drumstick` only when nothing matches, which keeps
+Episode 2 and 3 on `acorn`-family assets.
+
+### Episode 2 (`FamilyTime_Patreon-DX11-Build37`, Direct3D11)
+
+`episode=2 buildLabel=Build 37 (DX11) renderer=Direct3D11 supported=1 bound=1`,
+`instances=170`, `hungry=3`, `hungerTotal=3`, `hungerType=FOOD`.
+
+| Action | Response | Observed change |
+| --- | --- | --- |
+| Spawn food | `RES\|<id>\|SPAWN\|st=OK\|msg=Manual spawn: template=chicken_drumstick_GAT templateIndex=1 countBefore=170 countAfter=170 requested=x=4.85 y=-82.40 z=32.68` | `instances 170 -> 171` |
+| Feed | `RES\|<id>\|FEED\|st=OK\|msg=Manual feed: 3 need(s) satisfied.` | `hungry 3 -> 0`, `hungerTotal 3 -> 0`, `feeds 0 -> 3` |
+| Water on a FOOD day | `RES\|<id>\|WATER\|st=ERR\|msg=Manual water: Today's need is FOOD; water applies on thirst days (every third day).` | refused by design |
+| Set need | `RES\|<id>\|SETNEED\|st=OK\|msg=need type set to THIRST` | `hungerType FOOD -> THIRST` |
+
+After the need switch, `WATER` returned `No thirsty children right now` because
+feeding had just cleared every need, so thirst had not accumulated yet. That is
+the game's own state gate, not a failure of the path.
+
+### Episode 2 DX12 (`FamilyTime_Patreon-DX12-Build37`, Direct3D12)
+
+`episode=2 buildLabel=Build 37 (DX12) renderer=Direct3D12 supported=1 bound=1`,
+`instances=210`, `hungry=3`.
+
+| Action | Response | Observed change |
+| --- | --- | --- |
+| Spawn food | `RES\|<id>\|SPAWN\|st=OK\|msg=Manual spawn: template=chicken_drumstick_GAT templateIndex=1 countBefore=210 countAfter=210` | `instances 210 -> 211` |
+| Feed | `RES\|<id>\|FEED\|st=OK\|msg=Manual feed: 3 need(s) satisfied.` | `hungry 3 -> 0`, `hungerTotal 3 -> 0`, `feeds 0 -> 3` |
+
+### Episode 3 DX12
+
+Same managed API as Episode 3 DX11 and the same packed bit, but it has **not**
+been driven, so it stays unverified. Earlier documentation said the tool refused
+to bind it; that was inaccurate, because the build table marks the known DX12
+guid as supported like the others. It is now described as unverified instead.
 
 ## 5. Build identification
 
 `BuildDetector` identifies a running install by the Unity `build-guid` in
-`boot.config`, cross-checked against `Assembly-CSharp.dll`'s SHA-256. The table in
-`BuildDetector.cs` was populated by hashing the five target installations. Only
-the Episode 3 DX11 entry has been exercised at runtime.
+`boot.config`, cross-checked against `Assembly-CSharp.dll`'s hash. The table in
+`BuildDetector.cs` was populated by hashing the five target installations. Four
+entries have been exercised at runtime: both Episode 1 and Episode 2 builds and
+Episode 3 DX11.
 
 ## 6. Known limitations
 
